@@ -119,7 +119,12 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
         drawPaint.color = color
     }
 
-
+    fun undoPath(){
+        if(paths.isNotEmpty()){
+            paths.removeAt(paths.size - 1)
+            invalidate()
+        }
+    }
 
     val brushSizeValue: Float get() = brushSize
 

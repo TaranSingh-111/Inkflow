@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
     private lateinit var brushSizeButton: ImageButton
+    private lateinit var undoButton: ImageButton
 
     private lateinit var whiteColorButton: ImageButton
     private lateinit var blackColorButton: ImageButton
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         size = drawingView.brushSizeValue
 
         brushSizeButton = findViewById(R.id.button_brush)
-
+        undoButton = findViewById(R.id.button_undo)
         whiteColorButton = findViewById(R.id.white_button)
         blackColorButton = findViewById(R.id.black_button)
         redColorButton = findViewById(R.id.red_button)
@@ -45,10 +46,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         greenColorButton = findViewById(R.id.green_button)
         purpleColorButton = findViewById(R.id.purple_button)
 
-        brushSizeButton.setOnClickListener {
-            showSizeDialog()
-        }
 
+        brushSizeButton.setOnClickListener(this)
+        undoButton.setOnClickListener(this)
         whiteColorButton.setOnClickListener(this)
         blackColorButton.setOnClickListener(this)
         redColorButton.setOnClickListener(this)
@@ -125,6 +125,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             unselectColorButtons()
             view.isSelected = true
             drawingView.changeBrushColor("#FFAA66CC")
+            }
+            R.id.button_brush ->{
+                showSizeDialog()
+            }
+            R.id.button_undo ->{
+                drawingView.undoPath()
             }
         }
     }
