@@ -1,7 +1,9 @@
 package com.example.inkflow
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.SeekBar
@@ -11,11 +13,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
     private lateinit var brushSizeButton: ImageButton
 
     var size: Float = 0.0f
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -24,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         drawingView = findViewById(R.id.drawing_view)
         size = drawingView.brushSizeValue
 
-        brushSizeButton = findViewById(R.id.button_brush_size)
+        brushSizeButton = findViewById(R.id.button_brush)
 
         brushSizeButton.setOnClickListener {
             showSizeDialog()
@@ -56,4 +59,12 @@ class MainActivity : AppCompatActivity() {
         })
         sizeDialog.show()
     }
+
+    override fun onClick(p0: View?) {
+        when(p0?.id){
+
+        }
+    }
+
+
 }

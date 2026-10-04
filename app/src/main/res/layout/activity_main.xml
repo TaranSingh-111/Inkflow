@@ -17,12 +17,169 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.AppCompatImageButton
-        android:id="@+id/button_brush_size"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:src="@drawable/ic_size"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/constraint_1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="#A5DCE4">
+
+        <ImageButton
+            android:padding="0dp"
+            android:id="@+id/white_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_white_bg"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toStartOf="@id/constraint_2"
+            app:layout_constraintEnd_toStartOf="@id/black_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:id="@+id/black_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_black_bg"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/white_button"
+            app:layout_constraintEnd_toStartOf="@id/red_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:src="@drawable/ic_red_bg"
+            android:id="@+id/red_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/black_button"
+            app:layout_constraintEnd_toStartOf="@id/blue_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:src="@drawable/ic_blue_bg"
+            android:id="@+id/blue_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/red_button"
+            app:layout_constraintEnd_toStartOf="@id/orange_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:src="@drawable/ic_orange_bg"
+            android:id="@+id/orange_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/blue_button"
+            app:layout_constraintEnd_toStartOf="@id/green_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:src="@drawable/ic_green_bg"
+            android:id="@+id/green_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/orange_button"
+            app:layout_constraintEnd_toStartOf="@id/purple_button"/>
+
+        <ImageButton
+            android:padding="0dp"
+            android:src="@drawable/ic_purple_bg"
+            android:id="@+id/purple_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/green_button"
+            app:layout_constraintEnd_toStartOf="@id/button_color_picker"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_color_picker"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_color_wheel"
+            android:backgroundTint="#93C5CC"
+            app:layout_constraintTop_toTopOf="@id/constraint_2"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_2"
+            app:layout_constraintEnd_toEndOf="@id/constraint_2"
+            app:layout_constraintStart_toEndOf="@id/purple_button" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="#A5DCE4"
+        android:padding="5dp">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_brush"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_brush"
+            android:backgroundTint="#93C5CC"
+            app:layout_constraintTop_toTopOf="@id/constraint_1"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_1"
+            app:layout_constraintStart_toStartOf="@id/constraint_1"
+            app:layout_constraintEnd_toStartOf="@id/button_gallery"
+            android:scaleType="fitXY"/>
+
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_gallery"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_gallery"
+            android:backgroundTint="#93C5CC"
+            app:layout_constraintTop_toTopOf="@id/constraint_1"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_1"
+            app:layout_constraintStart_toEndOf="@id/button_brush"
+            app:layout_constraintEnd_toStartOf="@id/button_undo"
+            android:scaleType="fitXY"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_undo"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_undo"
+            android:backgroundTint="#93C5CC"
+            app:layout_constraintTop_toTopOf="@id/constraint_1"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_1"
+            app:layout_constraintStart_toEndOf="@id/button_gallery"
+            app:layout_constraintEnd_toStartOf="@id/button_save"
+            android:scaleType="fitXY"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/button_save"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_save"
+            android:backgroundTint="#93C5CC"
+            app:layout_constraintTop_toTopOf="@id/constraint_1"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_1"
+            app:layout_constraintStart_toEndOf="@id/button_undo"
+            app:layout_constraintEnd_toEndOf="@id/constraint_1"
+            android:scaleType="fitXY"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
