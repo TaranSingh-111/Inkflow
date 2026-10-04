@@ -11,6 +11,8 @@ import android.view.View
 import android.graphics.Path
 import android.util.TypedValue
 import android.view.MotionEvent
+import android.widget.ImageButton
+import androidx.core.graphics.toColorInt
 
 class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
 
@@ -110,6 +112,13 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
         )
         drawPaint.strokeWidth = brushSize
     }
+
+
+    fun changeBrushColor(newColor: String){
+        color = Color.parseColor(newColor)
+        drawPaint.color = color
+    }
+
 
 
     val brushSizeValue: Float get() = brushSize
