@@ -1,16 +1,29 @@
 package com.example.inkflow
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityOptions
 import android.app.Dialog
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import yuku.ambilwarna.AmbilWarnaDialog
@@ -18,6 +31,7 @@ import yuku.ambilwarna.AmbilWarnaDialog
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
     private lateinit var brushSizeButton: ImageButton
+    private lateinit var galleryButton: ImageButton
     private lateinit var undoButton: ImageButton
 
     private lateinit var whiteColorButton: ImageButton
@@ -29,8 +43,17 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var purpleColorButton: ImageButton
 
     private lateinit var colorPickerButton: ImageButton
-
     var size: Float = 0.0f
+
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {uri ->
+        if (uri != null) {
+            Log.d("PhotoPicker", "Selected URI: $uri")
+            findViewById<ImageView>(R.id.image_layer).setImageURI(uri)
+        } else {
+            Log.d("PhotoPicker", "No media selected")
+        }
+    }
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +64,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         size = drawingView.brushSizeValue
 
         brushSizeButton = findViewById(R.id.button_brush)
+        galleryButton = findViewById(R.id.button_gallery)
         undoButton = findViewById(R.id.button_undo)
         whiteColorButton = findViewById(R.id.white_button)
         blackColorButton = findViewById(R.id.black_button)
@@ -53,6 +77,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
 
 
         brushSizeButton.setOnClickListener(this)
+        galleryButton.setOnClickListener(this)
         undoButton.setOnClickListener(this)
         whiteColorButton.setOnClickListener(this)
         blackColorButton.setOnClickListener(this)
@@ -62,6 +87,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         greenColorButton.setOnClickListener(this)
         purpleColorButton.setOnClickListener(this)
         colorPickerButton.setOnClickListener(this)
+
+        blackColorButton.isSelected = true
     }
 
     private fun showSizeDialog(){
@@ -98,6 +125,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             }
 
             override fun onOk(p0: AmbilWarnaDialog?, p1: Int) {
+                unselectColorButtons()
                 drawingView.changeBrushColor(p1)
             }
         })
@@ -151,6 +179,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             }
             R.id.button_brush ->{
                 showSizeDialog()
+            }
+            R.id.button_gallery ->{
+                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             }
             R.id.button_undo ->{
                 drawingView.undoPath()

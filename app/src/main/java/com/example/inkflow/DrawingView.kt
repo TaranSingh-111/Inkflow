@@ -31,6 +31,7 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
     private val paths = mutableListOf<FingerPath>()
 
     init {
+        setBackgroundColor(Color.TRANSPARENT)
         setupDrawing()
     }
 
