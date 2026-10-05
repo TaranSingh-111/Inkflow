@@ -2,6 +2,7 @@ package com.example.inkflow
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -12,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import yuku.ambilwarna.AmbilWarnaDialog
 
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var orangeColorButton: ImageButton
     private lateinit var greenColorButton: ImageButton
     private lateinit var purpleColorButton: ImageButton
+
+    private lateinit var colorPickerButton: ImageButton
 
     var size: Float = 0.0f
     @SuppressLint("MissingInflatedId")
@@ -45,6 +49,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         orangeColorButton = findViewById(R.id.orange_button)
         greenColorButton = findViewById(R.id.green_button)
         purpleColorButton = findViewById(R.id.purple_button)
+        colorPickerButton = findViewById(R.id.button_color_picker)
 
 
         brushSizeButton.setOnClickListener(this)
@@ -56,6 +61,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         orangeColorButton.setOnClickListener(this)
         greenColorButton.setOnClickListener(this)
         purpleColorButton.setOnClickListener(this)
+        colorPickerButton.setOnClickListener(this)
     }
 
     private fun showSizeDialog(){
@@ -82,6 +88,20 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             }
         })
         sizeDialog.show()
+    }
+
+    private fun showColorPickerDialog(){
+        //using a custom library
+        val dialog = AmbilWarnaDialog(this, Color.BLACK, object : AmbilWarnaDialog.OnAmbilWarnaListener {
+            override fun onCancel(p0: AmbilWarnaDialog?) {
+
+            }
+
+            override fun onOk(p0: AmbilWarnaDialog?, p1: Int) {
+                drawingView.changeBrushColor(p1)
+            }
+        })
+        dialog.show()
     }
 
     override fun onClick(view: View?) {
@@ -125,6 +145,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             unselectColorButtons()
             view.isSelected = true
             drawingView.changeBrushColor("#FFAA66CC")
+            }
+            R.id.button_color_picker ->{
+                showColorPickerDialog()
             }
             R.id.button_brush ->{
                 showSizeDialog()

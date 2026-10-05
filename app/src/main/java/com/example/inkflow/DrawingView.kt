@@ -114,9 +114,14 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
     }
 
 
-    fun changeBrushColor(newColor: String){
-        color = Color.parseColor(newColor)
-        drawPaint.color = color
+    fun changeBrushColor(newColor: Any){
+        if(newColor is String){
+            color = Color.parseColor(newColor)
+            drawPaint.color = color
+        }else{
+            color = newColor as Int
+            drawPaint.color = color
+        }
     }
 
     fun undoPath(){
