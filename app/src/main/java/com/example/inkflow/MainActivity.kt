@@ -7,6 +7,7 @@ import android.app.ActivityOptions
 import android.app.Dialog
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,12 +22,16 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import yuku.ambilwarna.AmbilWarnaDialog
+import java.io.File
 
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
@@ -43,9 +48,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var purpleColorButton: ImageButton
 
     private lateinit var colorPickerButton: ImageButton
+
+    private var cameraImageUri: Uri? = null
     var size: Float = 0.0f
 
-    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {uri ->
+    private val pickMedia =
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) {uri ->
         if (uri != null) {
             Log.d("PhotoPicker", "Selected URI: $uri")
             findViewById<ImageView>(R.id.image_layer).setImageURI(uri)
@@ -53,6 +61,25 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             Log.d("PhotoPicker", "No media selected")
         }
     }
+
+    private val requestCameraPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) {granted ->
+            if(granted){
+                cameraImageUri = createImageUri()
+                takePicture.launch(cameraImageUri!!)
+            }else{
+                Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    private val takePicture =
+        registerForActivityResult(ActivityResultContracts.TakePicture()){success ->
+            if(success){
+                cameraImageUri?.let{ uri ->
+                    findViewById<ImageView>(R.id.image_layer).setImageURI(uri)
+                }
+            }
+        }
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,6 +144,45 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         sizeDialog.show()
     }
 
+    private fun showImageSourceDialog(){
+        val sourceDialog = Dialog(this@MainActivity)
+        sourceDialog.setContentView(R.layout.dialog_image_source_selector)
+
+        val cameraTextView: TextView = sourceDialog.findViewById<TextView>(R.id.camera_textview)
+        val galleryTextView: TextView = sourceDialog.findViewById<TextView>(R.id.gallery_textview)
+
+        cameraTextView.setOnClickListener {
+            if(ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA ) == PackageManager.PERMISSION_GRANTED){
+                cameraImageUri = createImageUri()
+                takePicture.launch(cameraImageUri!!)
+            }else{
+                requestCameraPermission.launch(Manifest.permission.CAMERA)
+            }
+            sourceDialog.hide()
+        }
+
+        galleryTextView.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            sourceDialog.hide()
+        }
+
+        sourceDialog.show()
+    }
+
+    private fun createImageUri() : Uri{
+        val imageFile = File(
+            externalCacheDir,
+            "camera_${System.currentTimeMillis()}.jpg"
+        )
+
+        return FileProvider.getUriForFile(
+            this,
+            "${applicationContext.packageName}.provider",
+            imageFile
+        )
+    }
     private fun showColorPickerDialog(){
         //using a custom library
         val dialog = AmbilWarnaDialog(this, Color.BLACK, object : AmbilWarnaDialog.OnAmbilWarnaListener {
@@ -181,7 +247,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
                 showSizeDialog()
             }
             R.id.button_gallery ->{
-                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                showImageSourceDialog()
             }
             R.id.button_undo ->{
                 drawingView.undoPath()
