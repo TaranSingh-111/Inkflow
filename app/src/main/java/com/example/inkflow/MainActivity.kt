@@ -5,10 +5,16 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityOptions
 import android.app.Dialog
+import android.content.ContentResolver
+import android.content.ContentValues
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -26,18 +32,21 @@ import androidx.activity.result.launch
 import androidx.activity.result.registerForActivityResult
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import yuku.ambilwarna.AmbilWarnaDialog
 import java.io.File
+import androidx.core.graphics.createBitmap
 
 class MainActivity : AppCompatActivity(), View.OnClickListener{
     private lateinit var drawingView: DrawingView
     private lateinit var brushSizeButton: ImageButton
     private lateinit var galleryButton: ImageButton
     private lateinit var undoButton: ImageButton
+    private lateinit var saveButton: ImageButton
 
     private lateinit var whiteColorButton: ImageButton
     private lateinit var blackColorButton: ImageButton
@@ -93,6 +102,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         brushSizeButton = findViewById(R.id.button_brush)
         galleryButton = findViewById(R.id.button_gallery)
         undoButton = findViewById(R.id.button_undo)
+        saveButton = findViewById(R.id.button_save)
         whiteColorButton = findViewById(R.id.white_button)
         blackColorButton = findViewById(R.id.black_button)
         redColorButton = findViewById(R.id.red_button)
@@ -106,6 +116,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         brushSizeButton.setOnClickListener(this)
         galleryButton.setOnClickListener(this)
         undoButton.setOnClickListener(this)
+        saveButton.setOnClickListener(this)
         whiteColorButton.setOnClickListener(this)
         blackColorButton.setOnClickListener(this)
         redColorButton.setOnClickListener(this)
@@ -171,18 +182,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         sourceDialog.show()
     }
 
-    private fun createImageUri() : Uri{
-        val imageFile = File(
-            externalCacheDir,
-            "camera_${System.currentTimeMillis()}.jpg"
-        )
-
-        return FileProvider.getUriForFile(
-            this,
-            "${applicationContext.packageName}.provider",
-            imageFile
-        )
-    }
     private fun showColorPickerDialog(){
         //using a custom library
         val dialog = AmbilWarnaDialog(this, Color.BLACK, object : AmbilWarnaDialog.OnAmbilWarnaListener {
@@ -252,6 +251,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
             R.id.button_undo ->{
                 drawingView.undoPath()
             }
+            R.id.button_save ->{
+                saveDrawing()
+            }
         }
     }
 
@@ -265,5 +267,59 @@ class MainActivity : AppCompatActivity(), View.OnClickListener{
         purpleColorButton.isSelected = false
     }
 
+    private fun createImageUri() : Uri{
+        val imageFile = File(
+            externalCacheDir,
+            "camera_${System.currentTimeMillis()}.jpg"
+        )
 
+        return FileProvider.getUriForFile(
+            this,
+            "${applicationContext.packageName}.provider",
+            imageFile
+        )
+    }
+
+    private fun saveDrawing(){
+        val drawingArea = findViewById<ConstraintLayout>(R.id.drawing_area)
+
+        val bitmap = createBitmap(drawingArea.width, drawingArea.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        canvas.drawColor(Color.WHITE)
+        drawingArea.draw(canvas)
+        drawingView.draw(canvas)
+
+        val filename = "InkFlow_${System.currentTimeMillis()}.jpg"
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+            put(MediaStore.Images.Media.MIME_TYPE, "images/jpg")
+            put(MediaStore.Images.Media.RELATIVE_PATH,
+                Environment.DIRECTORY_PICTURES + "/InkFlow")
+            put(MediaStore.Images.Media.IS_PENDING, 1)
+        }
+
+        val resolver = contentResolver
+        val uri = resolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            contentValues
+        )
+
+        if(uri != null){
+            resolver.openOutputStream(uri)?.use{outputStream ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    100,
+                    outputStream
+                )
+            }
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            resolver.update(uri, contentValues, null, null)
+
+            Toast.makeText(this, "Image saved to /InkFlow", Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this, "Error saving image", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
