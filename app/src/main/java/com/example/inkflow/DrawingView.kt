@@ -107,11 +107,7 @@ class DrawingView(context: Context, attrs: AttributeSet): View(context, attrs) {
 
     //brush size changer
     fun changeBrushSize(newSize: Float){
-        brushSize = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            newSize, resources.displayMetrics
-        )
-        drawPaint.strokeWidth = brushSize
+        brushSize = newSize
     }
 
 
